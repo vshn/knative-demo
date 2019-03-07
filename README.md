@@ -119,6 +119,12 @@ kubectl -n default logs <buildpod> -c build-step-build-and-push
 
 # Demo 4: Eventing
 
+Apply the manifest to define a service (sink) and an eventsource:
+
+```
+kubectl apply -f 04-eventing/eventing.yaml
+```
+
 # TODO
 
 * Write script using https://github.com/paxtonhare/demo-magic
