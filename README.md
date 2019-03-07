@@ -121,5 +121,4 @@ kubectl -n default logs <buildpod> -c build-step-build-and-push
 
 # TODO
 
-* Setup https://github.com/dhellmann/demoshell
 * Write script using https://github.com/paxtonhare/demo-magic
