@@ -125,6 +125,10 @@ Apply the manifest to define a service (sink) and an eventsource:
 kubectl apply -f 04-eventing/eventing.yaml
 ```
 
+```
+kubectl logs -l serving.knative.dev/service=message-dumper -c user-container --since=10m
+```
+
 # TODO
 
 * Write script using https://github.com/paxtonhare/demo-magic
