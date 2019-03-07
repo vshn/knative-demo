@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: basic-user-pass
+  namespace: default
+  annotations:
+    build.knative.dev/docker-0: https://index.docker.io/v1/
+type: kubernetes.io/basic-auth
+data:
+  # Use 'echo -n "username" | base64' to generate this string
+  username: dXNlcm5hbWU=
+  # Use 'echo -n "password" | base64' to generate this string
+  password: cGFzc3dvcmQ=
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: build-bot
+  namespace: default
+secrets:
+  - name: basic-user-pass
+---
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: app-from-source
+  namespace: default
+spec:
+  runLatest:
+    configuration:
+      build:
+        apiVersion: build.knative.dev/v1alpha1
+        kind: Build
+        spec:
+          serviceAccountName: build-bot
+          source:
+            git:
+              url: https://github.com/mchmarny/simple-app.git
+              revision: master
+          template:
+            name: kaniko
+            arguments:
+            - name: IMAGE
+              value: docker.io/vshn/app-from-source:latest
+          timeout: 10m
+      revisionTemplate:
+        spec:
+          container:
+            image: docker.io/vshn/app-from-source:latest
+            imagePullPolicy: Always
+            env:
+              - name: SIMPLE_MSG
+                value: "Hello from the sample app!"

@@ -95,6 +95,28 @@ $(kubectl get pods --namespace knative-monitoring \
 
 # Demo 3: Build
 
+This demo uses Kaniko, install a build template first:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/knative/build-templates/master/kaniko/kaniko.yaml
+```
+
+TODO Prepare registry
+
+Apply the manifest to start building and deploying the application:
+
+```
+kubectl apply -f 03-build/build.yaml
+```
+
+Build is now running in a Pod using init containers. To view logs, use:
+
+```
+kubectl -n default logs <buildpod> -c build-step-credential-initializer
+kubectl -n default logs <buildpod> -c build-step-git-source-0
+kubectl -n default logs <buildpod> -c build-step-build-and-push
+```
+
 # Demo 4: Eventing
 
 # TODO
