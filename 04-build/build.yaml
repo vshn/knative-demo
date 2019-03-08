@@ -8,9 +8,9 @@ metadata:
 type: kubernetes.io/basic-auth
 data:
   # Use 'echo -n "username" | base64' to generate this string
-  username: dXNlcm5hbWU=
+  username: dnNobmJvdA==
   # Use 'echo -n "password" | base64' to generate this string
-  password: cGFzc3dvcmQ=
+  password: NTcvWmhMTEUten42Yysudkxr
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -41,12 +41,12 @@ spec:
             name: kaniko
             arguments:
             - name: IMAGE
-              value: docker.io/vshn/app-from-source:latest
+              value: docker.io/vshn/knative-demo:latest
           timeout: 10m
       revisionTemplate:
         spec:
           container:
-            image: docker.io/vshn/app-from-source:latest
+            image: docker.io/vshn/knative-demo:latest
             imagePullPolicy: Always
             env:
               - name: SIMPLE_MSG
