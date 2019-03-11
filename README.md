@@ -222,3 +222,4 @@ kubectl logs -l serving.knative.dev/service=message-dumper -c user-container --s
 # TODO
 
 * Write script using https://github.com/paxtonhare/demo-magic
+* Cleanup after each demo
