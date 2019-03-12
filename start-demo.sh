@@ -2,11 +2,12 @@
 
 # Choose which demos to run
 DEMOS="1 2 3 4 5"
+CLEANUP=""
 
 while getopts ":z:" opt; do
   case $opt in
     x)
-      CLEANUP=true
+      CLEANUP="yes"
       ;;
     z)
       DEMOS=$OPTARG
@@ -28,34 +29,28 @@ clear
 ### Demo 1
 if [[ $DEMOS == *"1"* ]]; then
   title="Demo 1 - Hello World with Knative Serving"
-  echo $title
+  echo "$title: Deploy app"
 
   pe "cat 01-helloworld/helloworld.yaml"
+  pe "kubectl -n default get pod"
   pe "kubectl apply -f 01-helloworld/helloworld.yaml"
-  for i in {1..2}; do
-    pe "kubectl -n default get ksvc"
-    sleep 3
-  done
-  echo "..."
-  echo
-  wait
-  clear
+  pe "kubectl -n default get pod"
+  pe "kubectl -n default get ksvc"
 
   export HOST_URL=$(kubectl -n default get ksvc helloworld-go --output jsonpath='{.status.domain}')
   export IP_ADDRESS=$(kubectl get node -o 'jsonpath={.items[0].status.addresses[0].address}'):$(kubectl -n istio-system get svc istio-ingressgateway -o 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
 
-  echo $title
   pe "curl -H \"Host: ${HOST_URL}\" http://${IP_ADDRESS}/"
   wait
   clear
 
-  echo $title
+  echo "$title: Show objects and edit app deployment"
   pe "kubectl -n default get configuration"
   pe "kubectl -n default get revision"
   pe "kubectl -n default get route"
   pe "kubectl -n default edit ksvc helloworld-go"
   pe "kubectl -n default get revision"
-  sleep 5
+  pe "kubectl -n default get pod"
   pe "curl -H \"Host: ${HOST_URL}\" http://${IP_ADDRESS}/"
   wait
   clear
@@ -70,18 +65,12 @@ if [[ $DEMOS == *"2"* ]]; then
 
   pe "cat 02-autoscaling/autoscale.yaml"
   pe "kubectl apply -f 02-autoscaling/autoscale.yaml"
-  for i in {1..2}; do
-    pe "kubectl -n default get route"
-    sleep 3
-  done
-  echo "..."
-  wait
-  clear
+  pe "kubectl -n default get pod"
+  pe "kubectl -n default get route"
 
   export HOST_URL=$(kubectl -n default get ksvc autoscale-go --output jsonpath='{.status.domain}')
   export IP_ADDRESS=$(kubectl get node -o 'jsonpath={.items[0].status.addresses[0].address}'):$(kubectl -n istio-system get svc istio-ingressgateway -o 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
 
-  echo $title
   pe "curl -H \"Host: ${HOST_URL}\" http://${IP_ADDRESS}/?sleep=5&prime=10000&bloat=5"
   wait
   clear
@@ -105,12 +94,10 @@ if [[ $DEMOS == *"3"* ]]; then
 
   pe "cat 03-bluegreen/01-blue-green-demo-config.yaml"
   pe "kubectl apply -f 03-bluegreen/01-blue-green-demo-config.yaml"
-  echo
-  wait
-  clear
+  pe "kubectl get pod"
 
-  echo "$title: Create the route"
   export REV01=$(kubectl get config blue-green-demo -o 'jsonpath={.status.latestCreatedRevisionName}')
+
   pe "cat 03-bluegreen/02-blue-green-demo-route.yaml"
   pe "cat 03-bluegreen/02-blue-green-demo-route.yaml | sed \"s/blue-green-demo-00001/$REV01/\" | kubectl apply -f -"
   pe "kubectl get route"
@@ -126,6 +113,7 @@ if [[ $DEMOS == *"3"* ]]; then
   pe "cat 03-bluegreen/03-blue-green-demo-config.yaml"
   pe "kubectl apply -f 03-bluegreen/03-blue-green-demo-config.yaml"
   pe "kubectl get revision"
+  pe "kubectl get pod"
   export REV02=$(kubectl get config blue-green-demo -o 'jsonpath={.status.latestCreatedRevisionName}')
   pe "curl -H \"Host: ${HOST_URL}\" \"http://${IP_ADDRESS}/\""
   echo
@@ -176,13 +164,17 @@ if [[ $DEMOS == *"4"* ]]; then
   echo $title
   pe "kubectl get build"
   pe "kubectl get pod"
-  echo "type export BUILDPOD=pod"
-  cmd
+
+  export BUILDPOD=$(kubectl -n default get pod -o 'jsonpath={.items[0].metadata.name}')
+
   pe "kubectl -n default logs $BUILDPOD -c build-step-credential-initializer"
   pe "kubectl -n default logs $BUILDPOD -c build-step-git-source-0"
-  pe "kubectl -n default logs $BUILDPOD -c build-step-build-and-push -f"
+  pe "kubectl -n default logs $BUILDPOD -c build-step-build-and-push"
 
-  echo "As this takes too long for demo: skip"
+  echo
+  echo "Build takes too long for demo... Demo is finished here"
+  wait
+  clear
 
   kubectl delete -f 04-build/ &>/dev/null
 fi
@@ -206,7 +198,7 @@ if [[ $DEMOS == *"5"* ]]; then
   kubectl delete -f 05-eventing/ &>/dev/null
 fi
 
-if $CLEANUP; then
+if [[ "$CLEANUP" == "yes" ]]; then
   for i in * ; do
     if [ -d "$i" ]; then
       kubectl delete -f $i

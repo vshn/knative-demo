@@ -52,6 +52,9 @@ Interesting parts:
 
 Editing the service using `kubectl -n default edit ksvc helloworld-go` creates a new revision.
 
+* Demo credits: [Getting Started with Knative App Deployment](https://github.com/knative/docs/blob/master/install/getting-started-knative-app.md).
+* [Hello World App Source](https://github.com/knative/docs/tree/master/serving/samples/helloworld-go)
+
 # Demo 2: Autoscaling
 
 Deploy the sample application using:
@@ -99,6 +102,9 @@ Status of autoscaler can be retrieved using:
 ```
 kubectl get kpa
 ```
+
+* Demo credits: [Autoscale Sample](https://github.com/knative/docs/tree/master/serving/samples/autoscale-go).
+* [Autoscale App Source](https://github.com/knative/docs/tree/master/serving/samples/autoscale-go)
 
 # Demo 3: Blue/Green Deployment
 
@@ -172,6 +178,9 @@ curl -H "Host: ${HOST_URL}" "http://${IP_ADDRESS}/"
 curl -H "Host: v1.${HOST_URL}" "http://${IP_ADDRESS}/"
 ```
 
+* Demo credits: [Routing and managing traffic with blue/green deployment](https://github.com/knative/docs/blob/master/serving/samples/blue-green-deployment.md).
+* [Blue/Green App Source](https://github.com/mchmarny/knative-route-demo)
+
 # Demo 4: Build
 
 This demo uses Kaniko, install the build template first:
@@ -204,6 +213,9 @@ export IP_ADDRESS=$(kubectl get node -o 'jsonpath={.items[0].status.addresses[0]
 curl -H "Host: ${HOST_URL}" "http://${IP_ADDRESS}/"
 ```
 
+* Demo credits: [Orchestrating a source-to-URL deployment on Kubernetes](https://github.com/knative/docs/blob/master/serving/samples/source-to-url-go/README.md).
+* [Build App Source](https://github.com/mchmarny/simple-app)
+
 # Demo 5: Eventing
 
 Apply the manifest to define a service (sink) and an eventsource:
@@ -219,7 +231,11 @@ catched by the sink app called message-dumper:
 kubectl logs -l serving.knative.dev/service=message-dumper -c user-container --since=10m
 ```
 
-# TODO
+* Demo credits: [Cron Job Source example](https://github.com/knative/docs/tree/master/eventing/samples/cronjob-source).
+* [Message Dumper App Source](https://github.com/knative/eventing-sources/tree/master/cmd/message_dumper)
 
-* Write script using https://github.com/paxtonhare/demo-magic
-* Cleanup after each demo
+# Demo Magic Usage
+
+Start the demo using `./start-demo.sh`. By default it runs all demos, specifying `-z "n n n"`, where `n` are
+the demo numbers, let's you choose which demo(s) to run. With `-x` (combined with f.e. `-z ""`) a manifest cleanup
+can be triggered.

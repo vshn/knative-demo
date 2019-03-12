@@ -8,9 +8,9 @@ metadata:
 type: kubernetes.io/basic-auth
 data:
   # Use 'echo -n "username" | base64' to generate this string
-  username: dnNobmJvdA==
+  username: dXNlcm5hbWU=
   # Use 'echo -n "password" | base64' to generate this string
-  password: NTcvWmhMTEUten42Yysudkxr
+  password: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ServiceAccount
