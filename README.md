@@ -2,6 +2,12 @@
 
 This project contains demo files for giving a Knative demo to interested parties.
 
+* [Demo 1: Hello World](#demo-1-hello-world)
+* [Demo 2: Autoscaling](#demo-2-autoscaling)
+* [Demo 3: Blue/Green Deployment](#demo-3-bluegreen-deployment)
+* [Demo 4: Build](#demo-4-build)
+* [Demo 5: Eventing](#demo-5-eventing)
+
 ## Prerequisits
 
 * A fresh Kubernetes cluster (1.11+) with cluster-admin rights
