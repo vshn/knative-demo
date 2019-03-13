@@ -189,6 +189,7 @@ if [[ $DEMOS == *"5"* ]]; then
   wait
   clear
 
+  title="Demo 5 - Knative Eventing: Container Logs"
   pe "kubectl logs -l serving.knative.dev/service=message-dumper -c user-container"
   pe "kubectl logs -l serving.knative.dev/service=message-dumper -c user-container"
 
